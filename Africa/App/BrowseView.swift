@@ -17,8 +17,10 @@ struct BrowseView: View {
                     .frame(height: 300)
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 
-                ForEach(animals){ item in
-                    AnimalListItemView(animal: item)
+                ForEach(animals){ animal in
+                    NavigationLink(destination: AnimalDetailsView(animal: animal)){
+                        AnimalListItemView(animal: animal)
+                    }
                 }
             }
             .navigationTitle("Africa")

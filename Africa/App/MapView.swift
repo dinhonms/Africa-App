@@ -6,10 +6,39 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct MapView: View {
+    var locations: [LocationModel] = Bundle.main.decode("locations.json")
+    
+    @State private var region: MKCoordinateRegion = {
+        var coordinates = CLLocationCoordinate2D (latitude: 6.600286, longitude: 16.4377599)
+        var zoomLevel = MKCoordinateSpan (latitudeDelta: 70.0, longitudeDelta: 70.0)
+        var region = MKCoordinateRegion(center: coordinates, span: zoomLevel)
+        
+        return region
+    }()
+    
     var body: some View {
-        Text("Map")
+        //MARK: - BASIC MAP
+//        Map(coordinateRegion: $region)
+        
+        //MARK: - ADVANCED MAP
+        Map(coordinateRegion: $region, annotationItems: locations, annotationContent: { item in
+            //PIN: OLD STYLE (without interaction)
+//            MapPin(coordinate: item.location, tint: .accentColor)
+            
+            //MARKER: NEW STYLE (without interaction)
+//            MapMarker(coordinate: item.location, tint: .accentColor)
+            
+            //CUSTOM ANNOTATION (with interaction)
+            MapAnnotation(coordinate: item.location, anchorPoint: .zero) {
+                Image("logo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 32, height: 32)
+            }
+        })
     }
 }
 

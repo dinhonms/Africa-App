@@ -32,13 +32,21 @@ struct MapView: View {
 //            MapMarker(coordinate: item.location, tint: .accentColor)
             
             //CUSTOM ANNOTATION (with interaction)
-            MapAnnotation(coordinate: item.location, anchorPoint: .zero) {
-                Image("logo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 32, height: 32)
+//            MapAnnotation(coordinate: item.location, anchorPoint: .zero) {
+//                Image("logo")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
+//                    .frame(width: 32, height: 32)
+//            }
+            
+            //CUSTOM ADVANCED ANNOTATION (with interaction)
+            MapAnnotation(coordinate: item.location) {
+                MapAnnotationView(location: item)
             }
         })
+        .overlay(alignment: .top) {
+            CoordinatesView(latitude: region.center.latitude, longitude: region.center.longitude)
+        }
     }
 }
 

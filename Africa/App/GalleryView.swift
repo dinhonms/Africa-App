@@ -25,7 +25,6 @@ struct GalleryView: View {
     
     //Dynamic grid
     @State var gridLayout: [GridItem] = [GridItem(.flexible())]
-    @State var gridColumn: Double = 3.0
     @State var selectedGridButton = "square.grid.4x3.fill"
     @State var gridButtons = [
         "square.grid.4x3.fill",
@@ -33,64 +32,60 @@ struct GalleryView: View {
         "square.grid.3x2.fill"
     ]
     
-    @State var gridButtonIndex: Int = 0
-    
-    func changeGridButton() -> String {
-        gridButtonIndex += 1
+    func changeGridLayout() {
+        gridLayout = Array(repeating: .init(.flexible()), count: gridLayout.count % 4 + 1)
         
-        if gridButtonIndex > gridButtons.count - 1 {
-            gridButtonIndex = 0
-        }
-        
-        selectedGridButton = gridButtons[gridButtonIndex]
-        
-        changeGridLayout()
-        
-        return selectedGridButton
+        changeGridIcon(columnCount: gridLayout.count)
     }
     
-    func changeGridLayout() {
-        gridColumn += 1
-        
-        if gridColumn > 4 {
-            gridColumn = 2
+    func changeGridIcon(columnCount: Int) {
+        switch columnCount {
+        case 1:
+            selectedGridButton = "square.grid.2x2.fill"
+        case 2:
+            selectedGridButton = "square.grid.3x2.fill"
+        case 3:
+            selectedGridButton = "square.grid.4x3.fill"
+        case 4:
+            selectedGridButton = "rectangle.grid.1x2.fill"
+        default:
+            selectedGridButton = "square.grid.4x3.fill"
         }
-        
-        gridLayout = Array(repeating: .init(.flexible()), count: Int(gridColumn))
     }
     
     func initializeGridLayout() {
-        gridLayout = Array(repeating: .init(.flexible()), count: Int(gridColumn))
+        gridLayout = Array(repeating: .init(.flexible()), count: 3)
     }
     
     var body: some View {
-        ScrollView (.vertical, showsIndicators: false) {
-            VStack (alignment: .center, spacing: 30){
-                Image(selectedImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(Circle())
-                    .overlay {
-                        Circle().stroke(lineWidth: 6)
-                    }
-                
-                HStack {
-                    Spacer()
-                    Button {
-                        changeGridButton()
-                        haptics.impactOccurred()
-                    } label: {
-                        Image(systemName: selectedGridButton)
-                            .font(.system(size: 30))
-                    }
+        VStack (alignment: .center, spacing: 30) {
+            Image(selectedImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .clipShape(Circle())
+                .overlay {
+                    Circle().stroke(lineWidth: 6)
                 }
-                .padding(.horizontal, 30)
-                
-                //                Slider(value: $gridColumn, in: 2...4, step: 1.0)
-                //                    .padding(.horizontal)
-                //                    .onChange(of: gridColumn) { newValue in
-                //                        changeGridLayout()
-                //                    }
+            
+            HStack {
+                Spacer()
+                Button {
+                    changeGridLayout()
+                    haptics.impactOccurred()
+                } label: {
+                    Image(systemName: selectedGridButton)
+                        .font(.system(size: 30))
+                }
+            }
+            .padding(.horizontal, 30)
+            
+            ScrollView (.vertical, showsIndicators: false) {
+                //Slider option
+//                Slider(value: $gridColumn, in: 2...4, step: 1.0)
+//                    .padding(.horizontal)
+//                    .onChange(of: gridColumn) { newValue in
+//                        changeGridLayout()
+//                    }
                 
                 LazyVGrid(columns: gridLayout, alignment: .center, spacing: 10) {
                     ForEach(animals) { animal in
@@ -109,13 +104,14 @@ struct GalleryView: View {
                         
                     }
                 }
+                .padding(.vertical)
                 .animation(.easeIn)
                 .onAppear {
                     initializeGridLayout()
                 }
             }
             .padding(.horizontal, 10)
-            .padding(.vertical, 50)
+            .padding(.vertical, 10)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(

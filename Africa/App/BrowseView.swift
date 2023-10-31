@@ -61,6 +61,9 @@ struct BrowseView: View {
                                 AnimalListItemView(animal: animal)
                             }
                         }
+                        
+                        CreditsView()
+                            .modifier(CenterModifier())
                     }
                 }
                 
